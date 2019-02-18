@@ -74,3 +74,15 @@ def MatrixJN(domain: Domain, policy: Policy.Policy, N):
                 L[-1][j][i] += domain.gamma * domain.beta * L[-2][0][0]
     return L
 
+
+def MatrixQN(domain, N):
+    L = [np.array([[{Domain.UP: 0, Domain.RIGHT: 0, Domain.DOWN: 0, Domain.LEFT: 0} for l in range(domain.n)] for m in range(domain.m)])]
+    for h in range(1, N):
+        L.append(np.array([[{Domain.UP: 0, Domain.RIGHT: 0, Domain.DOWN: 0, Domain.LEFT: 0} for l in range(domain.n)] for m in range(domain.m)]))
+        for i in range(domain.n):
+            for j in range(domain.m):
+                for k in Domain.ACTION_SPACE:
+                    L[-1][j][i][k] = domain.reward([i, j], k)
+                    L[-1][j][i] += domain.gamma * (1 - domain.beta) * max(L[-2][min(max(j + k[1], 0), domain.n - 1)][min(max(i + k[0], 0), domain.m - 1)].value)
+                    L[-1][j][i] += domain.gamma * domain.beta * max(L[-2][0][0].value)
+    return L

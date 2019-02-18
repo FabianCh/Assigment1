@@ -1,4 +1,9 @@
 class MDP:
+    RIGHT = (1, 0)
+    LEFT = (-1, 0)
+    DOWN = (0, 1)
+    UP = (0, -1)
+    ACTION_SPACE = [RIGHT, LEFT, DOWN, UP]
 
     def __init__(self, gamma=0.99):
         self.N1 = {}
@@ -31,3 +36,19 @@ class MDP:
     def p(self, x, u, x2):
         return self.N2[(x, u, x2)] / self.N1[(x, u)]
 
+    def MatrixQN(self, N):
+        L = [np.array(
+            [[{MDP.UP: 0, MDP.RIGHT: 0, MDP.DOWN: 0, MDP.LEFT: 0} for l in range(domain.n)] for m in
+             range(domain.m)])]
+        for h in range(1, N):
+            L.append(np.array(
+                [[{MDP.UP: 0, MDP.RIGHT: 0, MDP.DOWN: 0, MDP.LEFT: 0} for l in range(domain.n)] for m in
+                 range(domain.m)]))
+            for i in range(domain.n):
+                for j in range(domain.m):
+                    for k in MDP.ACTION_SPACE:
+                        L[-1][j][i][k] = domain.reward([i, j], k)
+                        L[-1][j][i] += domain.gamma * (1 - domain.beta) * max(
+                            L[-2][min(max(j + k[1], 0), domain.n - 1)][min(max(i + k[0], 0), domain.m - 1)].value)
+                        L[-1][j][i] += domain.gamma * domain.beta * max(L[-2][0][0].value)
+        return L
