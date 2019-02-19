@@ -22,3 +22,5 @@ L = Domain.MatrixJN(domain, uppolicy, 4)
 for i in range(len(L)):
     print(L[i], "\n")
 
+print(Domain.MatrixQ(domain))
+print(Domain.mustar(domain))

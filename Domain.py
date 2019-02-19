@@ -21,13 +21,16 @@ class Domain:
         self.beta = beta
         self.w = rdm.uniform(0, 1)
 
+    def expectedmoves(self, action):
+        if action in self.ACTION_SPACE:
+            return [min(max(self.state[0] + action[0], 0), self.n - 1),
+                    min(max(self.state[1] + action[1], 0), self.m - 1)]
 
     def moves(self, action):
         if action in self.ACTION_SPACE:
             if self.w <= 1 - self.beta:
-                if action in self.ACTION_SPACE:
-                    self.state[0] = min(max(self.state[0] + action[0], 0), self.n - 1)
-                    self.state[1] = min(max(self.state[1] + action[1], 0), self.m - 1)
+                self.state[0] = min(max(self.state[0] + action[0], 0), self.n - 1)
+                self.state[1] = min(max(self.state[1] + action[1], 0), self.m - 1)
             else:
                 self.state[0] = 0
                 self.state[1] = 0
@@ -42,6 +45,14 @@ class Domain:
 
     def g(self, x, y):
         return self.board[y][x]
+
+    def p(self, x, u, x2):
+        res = 0
+        if self.expectedmoves(u) == x2:
+            res += 1 - self.beta
+        elif x2 == [0, 0]:
+            res += self.beta
+        return res
 
 
 def JN(domain: Domain, policy: Policy.Policy, N):
@@ -83,6 +94,22 @@ def MatrixQN(domain, N):
             for j in range(domain.m):
                 for k in Domain.ACTION_SPACE:
                     L[-1][j][i][k] = domain.reward([i, j], k)
-                    L[-1][j][i] += domain.gamma * (1 - domain.beta) * max(L[-2][min(max(j + k[1], 0), domain.n - 1)][min(max(i + k[0], 0), domain.m - 1)].value)
-                    L[-1][j][i] += domain.gamma * domain.beta * max(L[-2][0][0].value)
+                    L[-1][j][i][k] += domain.gamma * (1 - domain.beta) * max(L[-2][min(max(j + k[1], 0), domain.n - 1)][min(max(i + k[0], 0), domain.m - 1)].values())
+                    L[-1][j][i][k] += domain.gamma * domain.beta * max(L[-2][0][0].values())
     return L
+
+def MatrixQ(domain):
+    N=0
+    while (2* (domain.gamma**N) * domain.B) / (1-domain.gamma)**2 > 0.01:
+        N += 1
+    return MatrixQN(domain, N)[-1]
+
+def mustar(domain):
+    Q = MatrixQ(domain)
+    mu = np.zeros_like(Q)
+    for x in range(domain.n):
+        for y in range(domain.m):
+            mu[x, y] = max(Q[x, y], key=Q[x,y].get)
+    return mu
+
+

@@ -10,6 +10,8 @@ class MDP:
         self.N2 = {}
         self.R = {}
         self.gamma = gamma
+        self.xmax = 0
+        self.ymax = 0
 
     def estimation(self, ht):
         for i in range((len(ht)-1)//3):
@@ -38,17 +40,19 @@ class MDP:
 
     def MatrixQN(self, N):
         L = [np.array(
-            [[{MDP.UP: 0, MDP.RIGHT: 0, MDP.DOWN: 0, MDP.LEFT: 0} for l in range(domain.n)] for m in
-             range(domain.m)])]
+            [[{MDP.UP: 0, MDP.RIGHT: 0, MDP.DOWN: 0, MDP.LEFT: 0} for l in range(self.xmax)] for m in
+             range(self.ymax)])]
         for h in range(1, N):
             L.append(np.array(
-                [[{MDP.UP: 0, MDP.RIGHT: 0, MDP.DOWN: 0, MDP.LEFT: 0} for l in range(domain.n)] for m in
-                 range(domain.m)]))
-            for i in range(domain.n):
-                for j in range(domain.m):
+                [[{MDP.UP: 0, MDP.RIGHT: 0, MDP.DOWN: 0, MDP.LEFT: 0} for l in range(self.xmax)] for m in
+                 range(self.ymax)]))
+            for i in range(self.xmax):
+                for j in range(self.ymax):
                     for k in MDP.ACTION_SPACE:
-                        L[-1][j][i][k] = domain.reward([i, j], k)
-                        L[-1][j][i] += domain.gamma * (1 - domain.beta) * max(
-                            L[-2][min(max(j + k[1], 0), domain.n - 1)][min(max(i + k[0], 0), domain.m - 1)].value)
-                        L[-1][j][i] += domain.gamma * domain.beta * max(L[-2][0][0].value)
+                        L[-1][j][i][k] = self.r([i, j], k)
+                        for key in self.N2.keys():
+                            if key[0:2] == [[i, j], k]:
+                                L[-1][j][i][k] += self.p(key) * \
+                                                  max(L[-2][min(max(j + k[1], 0), self.xmax - 1)]
+                                                      [min(max(i + k[0], 0), self.ymax - 1)].value)
         return L
