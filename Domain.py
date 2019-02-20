@@ -107,7 +107,7 @@ def MatrixQN(domain, N):
 
 def MatrixQ(domain):
     N=0
-    while (2* (domain.gamma**N) * domain.B) / (1-domain.gamma)**2 > 0.01:
+    while (2 * (domain.gamma**N) * domain.B) / (1-domain.gamma)**2 > 0.01:
         N += 1
     return MatrixQN(domain, N)[-1]
 
