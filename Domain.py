@@ -60,8 +60,8 @@ def JN(domain: Domain, policy: Policy.Policy, N):
     if N == 0:
         return 0
     else:
-        R = domain.reward(domain.state, policy.action())
-        domain.moves(policy.action())
+        R = domain.reward(domain.state, policy.action(domain.state))
+        domain.moves(policy.action(domain.state))
         return R + domain.gamma * JN(domain, policy, N-1)
 
 
@@ -80,10 +80,17 @@ def MatrixJN(domain: Domain, policy: Policy.Policy, N):
         L.append(np.array([[0. for k in range(domain.n)] for l in range(domain.m)]))
         for i in range(domain.n):
             for j in range(domain.m):
-                L[-1][j][i] = domain.reward([i, j], policy.action())
-                L[-1][j][i] += domain.gamma * (1 - domain.beta) * L[-2][min(max(j + policy.action()[1], 0), domain.n - 1)][min(max(i + policy.action()[0], 0), domain.m - 1)]
+                L[-1][j][i] = domain.reward([i, j], policy.action(domain.state))
+                L[-1][j][i] += domain.gamma * (1 - domain.beta) * L[-2][min(max(j + policy.action(domain.state)[1], 0), domain.n - 1)][min(max(i + policy.action(domain.state)[0], 0), domain.m - 1)]
                 L[-1][j][i] += domain.gamma * domain.beta * L[-2][0][0]
     return L
+
+
+def MatrixJ(domain, policy):
+    N = 0
+    while ((domain.gamma ** N) * domain.B) / (1 - domain.gamma) > 0.01:
+        N += 1
+    return MatrixJN(domain, policy, N)[-1]
 
 
 def MatrixQN(domain, N):
