@@ -67,8 +67,8 @@ class Domain:
                 action = self.DOWN
             else:
                 action = self.LEFT
-            reward = self.reward(self.state, action)
             self.moves(action)
+            reward = self.g(self.state[0], self.state[1])
             ht += [action, reward, tuple(self.state)]
         return ht
 

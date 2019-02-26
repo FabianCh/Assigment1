@@ -36,7 +36,7 @@ class Qlearning:
 
 
     def mustar(self):
-        mu = np.zeros_like(Q)
+        mu = np.zeros_like(self.Q)
         for x in range(self.xmax):
             for y in range(self.ymax):
                 mu[x, y] = max(self.Q[x, y], key=self.Q[x, y].get)

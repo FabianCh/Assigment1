@@ -52,14 +52,9 @@ domain = Domain.Domain(x=0, y=3, board=np.array([[-3, 1, -5, 0, 19],
 # print(mdp.MatrixJ(muhatstarpolicy))
 #
 
-
-
-
-ht = domain.generationtrajectoire(5)
+ht = domain.generationtrajectoire(10000)
 print(ht)
-
-h = [(0, 0), (0, 1), 6, (0, 1), (0, -1), -3, (0, 0), (0, -1), -3, (0, 0), (-1, 0), -3, (0, 0), (-1, 0), -3, (0, 0), (0, -1), -3, (0, 0), (-1, 0), -3, (0, 0), (0, -1), -3, (0, 0), (-1, 0), -3, (0, 0), (0, 1), 6, (0, 1)]
-
 Qagent = Qlearning.Qlearning(domain)
-Qagent.estimation(h)
+Qagent.estimation(ht)
 print(Qagent.Q)
+print(Qagent.mustar())
