@@ -27,6 +27,7 @@ class Qlearning:
             hu = ht[3*i + 1]
             hr = ht[3*i + 2]
             hx2 = ht[3*i + 3]
+            # print(hx, hu, hr, hx2)
 
             aux = 0
             for action in self.ACTION_SPACE:

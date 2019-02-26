@@ -52,9 +52,22 @@ domain = Domain.Domain(x=0, y=3, board=np.array([[-3, 1, -5, 0, 19],
 # print(mdp.MatrixJ(muhatstarpolicy))
 #
 
-ht = domain.generationtrajectoire(10000)
-print(ht)
+
+
 Qagent = Qlearning.Qlearning(domain)
+ht = domain.generationtrajectoire(1000)
 Qagent.estimation(ht)
+for i in range(100):
+    domain.state = [2, 2]
+    Qpolicy = Policy.Policy(Qagent.mustar(), 0.05)
+    ht = domain.generationtrajectoirepolicy(1000, Qpolicy)
+    Qagent.estimation(ht)
+
 print(Qagent.Q)
 print(Qagent.mustar())
+
+Qpolicy.epsilon = 0
+print(Domain.MatrixJ(domain, Qpolicy))
+
+mustarpolicy = Policy.Policy(Domain.mustar(domain))
+print(Domain.MatrixJ(domain, mustarpolicy))

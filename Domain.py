@@ -72,6 +72,16 @@ class Domain:
             ht += [action, reward, tuple(self.state)]
         return ht
 
+    def generationtrajectoirepolicy(self, taille, policy):
+        self.state = [2, 2]
+        ht = [tuple(self.state)]
+        for i in range(taille):
+            action = policy.action(self.state)
+            self.moves(action)
+            reward = self.g(self.state[0], self.state[1])
+            ht += [action, reward, tuple(self.state)]
+        return ht
+
 
 def JN(domain: Domain, policy: Policy.Policy, N):
     # method to return the Expected value after N turn with a policy in a domain
