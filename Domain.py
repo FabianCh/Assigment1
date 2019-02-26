@@ -54,6 +54,24 @@ class Domain:
             res += self.beta
         return res
 
+    def generationtrajectoire(self, taille):
+        self.state = [2, 2]
+        ht = [tuple(self.state)]
+        for i in range(taille):
+            w = rdm.uniform(0, 1)
+            if w < 0.25:
+                action = self.UP
+            elif w < 0.5:
+                action = self.RIGHT
+            elif w < 0.75:
+                action = self.DOWN
+            else:
+                action = self.LEFT
+            reward = self.reward(self.state, action)
+            self.moves(action)
+            ht += [action, reward, tuple(self.state)]
+        return ht
+
 
 def JN(domain: Domain, policy: Policy.Policy, N):
     # method to return the Expected value after N turn with a policy in a domain
