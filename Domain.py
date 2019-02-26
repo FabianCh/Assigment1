@@ -11,13 +11,13 @@ class Domain:
     UP = (0, -1)
     ACTION_SPACE = [RIGHT, LEFT, DOWN, UP]
 
-    def __init__(self, x, y, board, beta=0):
+    def __init__(self, x, y, board, beta=0, gamma=0.99):
         self.board = board
         self.n = len(board[0])
         self.m = len(board)
         self.state = [x, y]
         self.B = np.max(self.board)
-        self.gamma = 0.99
+        self.gamma = gamma
         self.beta = beta
         self.w = rdm.uniform(0, 1)
 
@@ -108,8 +108,8 @@ def MatrixJN(domain: Domain, policy: Policy.Policy, N):
         L.append(np.array([[0. for k in range(domain.n)] for l in range(domain.m)]))
         for i in range(domain.n):
             for j in range(domain.m):
-                L[-1][j][i] = domain.reward([i, j], policy.action(domain.state))
-                L[-1][j][i] += domain.gamma * (1 - domain.beta) * L[-2][min(max(j + policy.action(domain.state)[1], 0), domain.n - 1)][min(max(i + policy.action(domain.state)[0], 0), domain.m - 1)]
+                L[-1][j][i] = domain.reward([i, j], policy.action([i, j]))
+                L[-1][j][i] += domain.gamma * (1 - domain.beta) * L[-2][min(max(j + policy.action([i, j])[1], 0), domain.m - 1)][min(max(i + policy.action([i, j])[0], 0), domain.n - 1)]
                 L[-1][j][i] += domain.gamma * domain.beta * L[-2][0][0]
     return L
 

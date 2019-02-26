@@ -44,5 +44,14 @@ class Qlearning:
         return mu
 
 
+    def error(self, Q):
+        err = 0
+        for x in range(self.xmax):
+            for y in range(self.ymax):
+                for action in self.ACTION_SPACE:
+                    err += (Q[x][y][action] - self.Q[x][y][action])
+        return err
+
+
 
 

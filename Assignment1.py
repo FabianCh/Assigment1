@@ -3,13 +3,14 @@ import Policy
 import MDP
 import Qlearning
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 domain = Domain.Domain(x=0, y=3, board=np.array([[-3, 1, -5, 0, 19],
                                                     [6, 3, 8, 9, 10],
                                                     [5, -8, 4, 1, -8],
                                                     [6, -9, 4, 19, -5],
-                                                    [-20, -17, -4, -3, 9]]), beta=0.25)
+                                                    [-20, -17, -4, -3, 9]]), beta=0)
 
 # uppolicy = Policy.Policy([[Domain.Domain.UP for i in range(5)] for j in range(5)])
 #
@@ -59,15 +60,31 @@ ht = domain.generationtrajectoire(1000)
 Qagent.estimation(ht)
 for i in range(100):
     domain.state = [2, 2]
-    Qpolicy = Policy.Policy(Qagent.mustar(), 0.05)
-    ht = domain.generationtrajectoirepolicy(1000, Qpolicy)
+    Qpolicy = Policy.Policy(Qagent.mustar(), 0.5)
+    ht = domain.generationtrajectoirepolicy(100, Qpolicy)
     Qagent.estimation(ht)
 
-print(Qagent.Q)
-print(Qagent.mustar())
 
-Qpolicy.epsilon = 0
+print(Qagent.mustar())
+Qpolicy = Policy.Policy(Qagent.mustar())
 print(Domain.MatrixJ(domain, Qpolicy))
 
 mustarpolicy = Policy.Policy(Domain.mustar(domain))
 print(Domain.MatrixJ(domain, mustarpolicy))
+
+
+
+# Q = Domain.MatrixQ(domain)
+# X = []
+# Y = []
+# for i in range(0, 100000, 1000):
+#     Qagent = Qlearning.Qlearning(domain)
+#     ht = domain.generationtrajectoire(i)
+#     Qagent.estimation(ht)
+#     X += [i]
+#     Y += [Qagent.error(Q)]
+#
+# print(X)
+# print(Y)
+# plt.plot(X, Y)
+# plt.show()
